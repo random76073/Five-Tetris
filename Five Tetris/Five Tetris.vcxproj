@@ -71,7 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris\include;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22000.0\shared;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22000.0\um;$(IncludePath)</IncludePath>
+    <IncludePath>I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris;I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris\include;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22000.0\shared;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22000.0\um;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22000.0\um;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris\include;I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22000.0\um;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -104,16 +108,21 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level2</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>SDPI.xml</AdditionalManifestFiles>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -125,18 +134,32 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\basic.cpp" />
+    <ClCompile Include="src\brick.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\basic.h" />
+    <ClInclude Include="include\brick.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="SDPI.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Five Tetris.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\block.png" />
+    <Image Include="resources\icon.ico" />
+    <Image Include="resources\R-C.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

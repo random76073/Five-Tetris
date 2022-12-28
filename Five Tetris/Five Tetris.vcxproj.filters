@@ -21,10 +21,40 @@
     <ClCompile Include="src\basic.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\brick.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\basic.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\brick.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="SDPI.xml">
+      <Filter>资源文件</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Five Tetris.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\block.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\icon.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="resources\R-C.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
