@@ -7,7 +7,7 @@
 #include <tuple>
 #include <ctime>
 
-const int MSH_WIDTH = 18, MSH_HEIGHT = 24;
+const int MSH_WIDTH = 16, MSH_HEIGHT = 24;
 
 class Style {
 public:
@@ -178,7 +178,7 @@ public:
 	// It returns whether the group should be hardened.
 	bool move(BRICK_MOVE_DIRECTION direction, BrickLayout* layout);
 	void turn(BRICK_TURN_DIRECTION direction, BrickLayout* layout);
-	void flip();
+	void flip(BrickLayout* layout);
 	void render(unsigned int xoffset, unsigned int yoffset);
 	// Left, right and down.
 	std::tuple<bool, bool, bool> isEdge();

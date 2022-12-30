@@ -224,7 +224,7 @@ discard:
 	return;
 
 }
-void BrickGroup::flip() {
+void BrickGroup::flip(BrickLayout* layout) {
 	int t = 0;
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -234,6 +234,19 @@ void BrickGroup::flip() {
 		}
 	}
 	this->flush();
+	// verify
+	for (int i = 0; i < 5; i++) {
+		// left
+		while (std::get<0>(bricks[i].isFault(mesh))) {
+			this->move(BM_RIGHT, layout);
+		}
+		// right
+		while (std::get<1>(bricks[i].isFault(mesh))) {
+			this->move(BM_LEFT, layout);
+		}
+	}
+	layout->paste();
+	return;
 }
 void BrickGroup::flush() {
 	int count = 0;

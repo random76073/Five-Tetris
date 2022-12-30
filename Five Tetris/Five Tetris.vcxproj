@@ -75,7 +75,7 @@
     <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22000.0\um;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris\include;I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris;$(IncludePath)</IncludePath>
+    <IncludePath>I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris;I:\RareMetalSpace\Five Tetris\Five Tetris\Five Tetris\include;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22000.0\shared;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.22000.0\um;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Windows Kits\10\Lib\10.0.22000.0\um;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -144,10 +144,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\basic.cpp" />
     <ClCompile Include="src\brick.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\IGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\basic.h" />
     <ClInclude Include="include\brick.h" />
+    <ClInclude Include="include\Game.h" />
+    <ClInclude Include="include\IGame.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
