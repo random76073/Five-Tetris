@@ -30,6 +30,9 @@
     <ClCompile Include="src\IGame.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\basic.h">
@@ -45,6 +48,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\IGame.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

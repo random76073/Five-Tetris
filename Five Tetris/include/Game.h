@@ -4,14 +4,17 @@
 #include <wincodecsdk.h>
 #include <dwrite.h>
 #include <imm.h>
+#include <d3d11_1.h>
 #include <d2d1effects.h>
 #include <d2d1effectauthor.h>
 #include <d2d1effecthelpers.h>
+#include <ui.h>
 // static library
 #pragma comment (lib, "windowscodecs.lib")
 #pragma comment (lib, "dwrite.lib")
 #pragma comment (lib, "imm32.lib")
 #pragma comment (lib, "dxguid.lib")
+#pragma comment (lib, "d3d11.lib")
 
 class Clock {
 	float timer = 0.0f, lastTime = 0.0f, lastTimer = 0.0f;
@@ -39,14 +42,23 @@ protected:
 	// factories and render target
 	ID2D1Factory1* Factory;
 	IWICImagingFactory* WICFactory;
-	ID2D1HwndRenderTarget* renderTarget;
+	ID2D1DeviceContext* deviceContext;
 	IDWriteFactory* DWriteFactory;
+	ID3D11Device* device3d;
+	ID2D1Device* device;
+	ID3D11DeviceContext* deviceContext3d;
+	D3D_FEATURE_LEVEL featureLevel;
+	ID2D1Bitmap1* targetBitmap;
+	// swap chain
+	IDXGISwapChain1* swapChain;
+	DXGI_PRESENT_PARAMETERS presentParam;
 	// default paintings
 	IDWriteTextFormat* defaultFont;
 	ID2D1SolidColorBrush* defaultBrush;
+	ID2D1Effect* defaultEffect;
 	// window
 	HWND window;
-	const unsigned int SCR_WIDTH = 1280, SCR_HEIGHT = 720;
+	const unsigned int SCR_WIDTH = 1440, SCR_HEIGHT = 810;
 	MSG msg;
 	// clock and frequent
 	Clock clock;

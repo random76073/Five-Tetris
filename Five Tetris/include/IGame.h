@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "brick.h"
 #include "resource.h"
+#include "ui.h"
 
 class IGame : public Game2D {
 	// resource

@@ -7,7 +7,7 @@
 #include <tuple>
 #include <ctime>
 
-const int MSH_WIDTH = 16, MSH_HEIGHT = 24;
+const int MSH_WIDTH = 18, MSH_HEIGHT = 24;
 
 class Style {
 public:
@@ -136,25 +136,25 @@ enum BRICK_TURN_DIRECTION {
 class Thumbnail {
 public:
 	ID2D1Bitmap* image;
-	ID2D1HwndRenderTarget* renderTarget;
+	ID2D1DeviceContext* deviceContext;
 	Style style;
 	float width, height;
 
 	int x, y;
 
-	Thumbnail(ID2D1HwndRenderTarget*& renderTarget, Style style, IWICImagingFactory* WICFactory, float width, float height, int x, int y);
+	Thumbnail(ID2D1DeviceContext*& deviceContext, Style style, IWICImagingFactory* WICFactory, float width, float height, int x, int y);
 	void render(ID2D1SolidColorBrush* brush);
 };
 class Brick {
 public:
 	ID2D1Bitmap* image;
-	ID2D1HwndRenderTarget* renderTarget;
+	ID2D1DeviceContext* deviceContext;
 	D2D1::ColorF color;
 	float width, height;
 	// This x and y is the position in global mesh.
 	int x, y;
 
-	Brick(ID2D1HwndRenderTarget *&renderTarget, D2D1::ColorF color, IWICImagingFactory *WICFactory, float width, float height, int x, int y);
+	Brick(ID2D1DeviceContext *&deviceContext, D2D1::ColorF color, IWICImagingFactory *WICFactory, float width, float height, int x, int y);
 	void render(ID2D1SolidColorBrush* brush, unsigned int xoffset, unsigned int yoffset);
 	// Left, right and down.
 	std::tuple<bool, bool, bool> isEdge(std::vector<std::vector<unsigned int>> mesh);
@@ -173,7 +173,7 @@ public:
 	int x, y;
 	std::vector<std::vector<unsigned int>> mesh;
 
-	BrickGroup(Style style, ID2D1HwndRenderTarget* renderTarget, IWICImagingFactory* WICFactory, int x, int y, float width, float height, std::vector<std::vector<unsigned int>> mesh);
+	BrickGroup(Style style, ID2D1DeviceContext* deviceContext, IWICImagingFactory* WICFactory, int x, int y, float width, float height, std::vector<std::vector<unsigned int>> mesh);
 	/// @returns
 	// It returns whether the group should be hardened.
 	bool move(BRICK_MOVE_DIRECTION direction, BrickLayout* layout);
@@ -195,7 +195,7 @@ public:
 	// 1: Active brick
 	// 2: Hardened brick
 	std::vector<std::vector<unsigned int>> mesh;
-	ID2D1HwndRenderTarget* renderTarget;
+	ID2D1DeviceContext* deviceContext;
 	IWICImagingFactory* WICFactory;
 	ID2D1SolidColorBrush* defaultBrush;
 	// The container to save all the hardened bricks.
@@ -214,7 +214,7 @@ public:
 	// The offset from the left-up corner of screen.
 	unsigned int x, y;
 
-	BrickLayout(ID2D1HwndRenderTarget *renderTarget, IWICImagingFactory* WICFactory, float width, float height, unsigned int x, unsigned int y , std::vector<std::vector<unsigned int>>mesh);
+	BrickLayout(ID2D1DeviceContext*deviceContext, IWICImagingFactory* WICFactory, float width, float height, unsigned int x, unsigned int y , std::vector<std::vector<unsigned int>>mesh);
 	void render();
 	void harden();
 	void paste();

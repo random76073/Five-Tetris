@@ -19,14 +19,14 @@ Style STYLELIST[12] = {
 };
 
 // Brick
-Brick::Brick(ID2D1HwndRenderTarget *&renderTarget, D2D1::ColorF color, IWICImagingFactory *WICFactory, float width, float height, int x, int y)
-	:renderTarget(renderTarget), color(color), width(width), height(height), x(x), y(y){
-	loadResourceBitmap(renderTarget, WICFactory, MAKEINTRESOURCE(IDB_PNG1), L"PNG", &image);
+Brick::Brick(ID2D1DeviceContext*& deviceContext, D2D1::ColorF color, IWICImagingFactory *WICFactory, float width, float height, int x, int y)
+	:deviceContext(deviceContext), color(color), width(width), height(height), x(x), y(y){
+	loadResourceBitmap(deviceContext, WICFactory, MAKEINTRESOURCE(IDB_PNG1), L"PNG", &image);
 
 }
 void Brick::render(ID2D1SolidColorBrush* brush, unsigned int xoffset, unsigned int yoffset) {
-	renderTarget->DrawBitmap(image, D2D1::RectF(x * width + xoffset, y * height + yoffset, (x + 1) * width + xoffset, (y + 1) * height + yoffset));
-	renderTarget->FillRectangle(D2D1::RectF(x * width + xoffset, y * height + yoffset, (x + 1) * width + xoffset, (y + 1) * height + yoffset), brush);
+	deviceContext->DrawBitmap(image, D2D1::RectF(x * width + xoffset, y * height + yoffset, (x + 1) * width + xoffset, (y + 1) * height + yoffset));
+	deviceContext->FillRectangle(D2D1::RectF(x * width + xoffset, y * height + yoffset, (x + 1) * width + xoffset, (y + 1) * height + yoffset), brush);
 }
 std::tuple<bool, bool, bool> Brick::isEdge(std::vector<std::vector<unsigned int>> mesh) {
 	bool left, right, down;
@@ -99,16 +99,16 @@ bool Brick::inMesh() {
 }
 
 // Brick Group
-BrickGroup::BrickGroup(Style style, ID2D1HwndRenderTarget* renderTarget, IWICImagingFactory* WICFactory, int x, int y, float width, float height, std::vector<std::vector<unsigned int>> mesh)
+BrickGroup::BrickGroup(Style style, ID2D1DeviceContext* deviceContext, IWICImagingFactory* WICFactory, int x, int y, float width, float height, std::vector<std::vector<unsigned int>> mesh)
 	: x(x), y(y), style(style), mesh(mesh){
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
 			if (style.mesh[i][j] == 1) {
-				bricks.push_back(Brick(renderTarget, style.color, WICFactory, width, height, x + j, y + i));
+				bricks.push_back(Brick(deviceContext, style.color, WICFactory, width, height, x + j, y + i));
 			}
 		}
 	}
-	renderTarget->CreateSolidColorBrush(style.color, &brush);
+	deviceContext->CreateSolidColorBrush(style.color, &brush);
 	this->flush();
 
 }
@@ -269,14 +269,14 @@ void BrickGroup::render(unsigned int xoffset, unsigned int yoffset) {
 }
 
 // Brick Layout
-BrickLayout::BrickLayout(ID2D1HwndRenderTarget* renderTarget, IWICImagingFactory* WICFactory, float width, float height, unsigned int x, unsigned int y, std::vector<std::vector<unsigned int>>mesh)
-	: renderTarget(renderTarget), WICFactory(WICFactory), group(USTYLE, renderTarget, WICFactory, 3, -1, width, height, mesh), width(width), height(height), x(x), y(y), mesh(mesh), 
-	savingGroup(nullptr, 0), savingGroupThumbnail(renderTarget, Style(nullptr, D2D1::ColorF(0.1f, 0.1f, 0.8f, 0.1f)), WICFactory, width / 2, height / 2, x - width * 5 - 10, y) {
-	renderTarget->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f), &defaultBrush);
+BrickLayout::BrickLayout(ID2D1DeviceContext* deviceContext, IWICImagingFactory* WICFactory, float width, float height, unsigned int x, unsigned int y, std::vector<std::vector<unsigned int>>mesh)
+	: deviceContext(deviceContext), WICFactory(WICFactory), group(USTYLE, deviceContext, WICFactory, 3, -1, width, height, mesh), width(width), height(height), x(x), y(y), mesh(mesh), 
+	savingGroup(nullptr, 0), savingGroupThumbnail(deviceContext, Style(nullptr, D2D1::ColorF(0.1f, 0.1f, 0.8f, 0.1f)), WICFactory, width / 2, height / 2, x - width * 5 - 10, y) {
+	deviceContext->CreateSolidColorBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f), &defaultBrush);
 	for (int i = 0; i < 5; i++) {
 		Style tmp = STYLELIST[(rand() + i) % 12];
 		groupBuffer.push_back(tmp);
-		groupBufferThumbnail.push_back(Thumbnail(renderTarget, tmp, WICFactory, width / 2, height / 2, x + MSH_WIDTH * width, y + i * height / 2 * 5 + 10));
+		groupBufferThumbnail.push_back(Thumbnail(deviceContext, tmp, WICFactory, width / 2, height / 2, x + MSH_WIDTH * width, y + i * height / 2 * 5 + 10));
 	}
 }
 void BrickLayout::harden() {
@@ -292,28 +292,28 @@ void BrickLayout::harden() {
 }
 void BrickLayout::generateGroup() {
 	bricks.insert(bricks.end(), group.bricks.begin(), group.bricks.end());
-	srand(time(0));
-	groupBuffer.erase(groupBuffer.begin());
-	groupBufferThumbnail.erase(groupBufferThumbnail.begin());
+	srand(time(0));//
+	groupBuffer.erase(groupBuffer.begin());//
+	groupBufferThumbnail.erase(groupBufferThumbnail.begin());//
 	for (int i = 0; i < 4; i++) {
 		groupBufferThumbnail[i].y -= 60;
 	}
 	Style tmp = STYLELIST[rand() % 12];
 	groupBuffer.push_back(tmp);
-	groupBufferThumbnail.push_back(Thumbnail(renderTarget, tmp, WICFactory, width / 2, height / 2, x + MSH_WIDTH * width, y + 5 * height / 2 * 5 + 10));
-	group = BrickGroup(groupBuffer[0], renderTarget, WICFactory, 3, -1, width, height, mesh);
+	groupBufferThumbnail.push_back(Thumbnail(deviceContext, tmp, WICFactory, width / 2, height / 2, x + MSH_WIDTH * width, y + 5 * height / 2 * 5 + 10));
+	group = BrickGroup(groupBuffer[0], deviceContext, WICFactory, 3, -1, width, height, mesh);
 }
 void BrickLayout::render() {
 	// Background
 	defaultBrush->SetColor(D2D1::ColorF(0.4f, 0.4f, 0.4f));
-	renderTarget->FillRectangle(D2D1::RectF(x, y, MSH_WIDTH * width + x, MSH_HEIGHT * height + y), defaultBrush);
+	deviceContext->FillRectangle(D2D1::RectF(x, y, MSH_WIDTH * width + x, MSH_HEIGHT * height + y), defaultBrush);
 	// Mesh
 	defaultBrush->SetColor(D2D1::ColorF(0, 0, 0));
 	for (int i = 0; i < MSH_HEIGHT; i++) {
-		renderTarget->DrawLine(D2D1::Point2F(x, y + i * height), D2D1::Point2F(x + MSH_WIDTH * width, y + i * height), defaultBrush);
+		deviceContext->DrawLine(D2D1::Point2F(x, y + i * height), D2D1::Point2F(x + MSH_WIDTH * width, y + i * height), defaultBrush);
 	}
 	for (int i = 0; i < MSH_WIDTH; i++) {
-		renderTarget->DrawLine(D2D1::Point2F(x + i * width, y), D2D1::Point2F(x + i * width, y + MSH_HEIGHT * height), defaultBrush);
+		deviceContext->DrawLine(D2D1::Point2F(x + i * width, y), D2D1::Point2F(x + i * width, y + MSH_HEIGHT * height), defaultBrush);
 	}
 	// Bricks
 	group.render(x, y);
@@ -407,7 +407,7 @@ void BrickLayout::save() {
 		canSave = false;
 		Style tmp = savingGroup;
 		savingGroup = group.style;
-		savingGroupThumbnail = Thumbnail(renderTarget, savingGroup, WICFactory, width / 2, height / 2, x - width * 5 - 10, y);
+		savingGroupThumbnail = Thumbnail(deviceContext, savingGroup, WICFactory, width / 2, height / 2, x - width * 5 - 10, y);
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
 				if (tmp.mesh[i][j] == 1) {
@@ -415,26 +415,34 @@ void BrickLayout::save() {
 				}
 			}
 		}
-		srand(time(0));
-		group = BrickGroup(groupBuffer[0], renderTarget, WICFactory, 3, -1, width, height, mesh);
+		srand(time(0));//
+		groupBuffer.erase(groupBuffer.begin());//
+		groupBufferThumbnail.erase(groupBufferThumbnail.begin());//
+		for (int i = 0; i < 4; i++) {
+			groupBufferThumbnail[i].y -= 60;
+		}
+		tmp = STYLELIST[rand() % 12];
+		groupBuffer.push_back(tmp);
+		groupBufferThumbnail.push_back(Thumbnail(deviceContext, tmp, WICFactory, width / 2, height / 2, x + MSH_WIDTH * width, y + 5 * height / 2 * 5 + 10));
+		group = BrickGroup(groupBuffer[0], deviceContext, WICFactory, 3, -1, width, height, mesh);
 
 		return;
 	notZero:
-		group = BrickGroup(tmp, renderTarget, WICFactory, 3, -1, width, height, mesh);
+		group = BrickGroup(tmp, deviceContext, WICFactory, 3, -1, width, height, mesh);
 	}
 }
 
-Thumbnail::Thumbnail(ID2D1HwndRenderTarget*& renderTarget, Style style, IWICImagingFactory* WICFactory, float width, float height, int x, int y) 
-			: style(style), renderTarget(renderTarget), width(width), height(height), x(x), y(y) {
-	loadResourceBitmap(renderTarget, WICFactory, MAKEINTRESOURCE(IDB_PNG1), L"PNG", &image);
+Thumbnail::Thumbnail(ID2D1DeviceContext*& deviceContext, Style style, IWICImagingFactory* WICFactory, float width, float height, int x, int y)
+			: style(style), deviceContext(deviceContext), width(width), height(height), x(x), y(y) {
+	loadResourceBitmap(deviceContext, WICFactory, MAKEINTRESOURCE(IDB_PNG1), L"PNG", &image);
 }
 
 void Thumbnail::render(ID2D1SolidColorBrush* brush) {
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
 			if (style.mesh[i][j] == 1) {
-				renderTarget->DrawBitmap(image, D2D1::RectF(x + j * width, y + i * height, x + (j + 1) * width, y + (i + 1) * height), 0.5f);
-				renderTarget->FillRectangle(D2D1::RectF(x + j * width, y + i * height, x + (j + 1) * width, y + (i + 1) * height), brush);
+				deviceContext->DrawBitmap(image, D2D1::RectF(x + j * width, y + i * height, x + (j + 1) * width, y + (i + 1) * height), 0.5f);
+				deviceContext->FillRectangle(D2D1::RectF(x + j * width, y + i * height, x + (j + 1) * width, y + (i + 1) * height), brush);
 			}
 		}
 	}

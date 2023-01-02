@@ -2,7 +2,14 @@
 
 void IGame::init() {
 	Game2D::init();
-	loadResourceBitmap(renderTarget, WICFactory, MAKEINTRESOURCE(IDB_PNG2), L"PNG", &background);
+	loadResourceBitmap(deviceContext, WICFactory, MAKEINTRESOURCE(IDB_PNG2), L"PNG", &background);
+	presentParam.DirtyRectsCount = 0;
+	presentParam.pDirtyRects = nullptr;
+	presentParam.pScrollOffset = nullptr;
+	presentParam.pScrollRect = nullptr;
+	
+	// UI
+
 }
 void IGame::start() {
 	Game2D::start();
@@ -14,7 +21,7 @@ void IGame::start() {
 	// score record
 	score = 0;
 
-	float length = (renderTarget->GetSize().width > renderTarget->GetSize().height) ? renderTarget->GetSize().height / static_cast<float>(MSH_HEIGHT) : renderTarget->GetSize().width / static_cast<float>(MSH_WIDTH);
+	float length = (deviceContext->GetSize().width > deviceContext->GetSize().height) ? deviceContext->GetSize().height / static_cast<float>(MSH_HEIGHT) : deviceContext->GetSize().width / static_cast<float>(MSH_WIDTH);
 	std::vector<std::vector<unsigned int>>mesh;
 	for (int i = 0; i < MSH_HEIGHT; i++) {
 		mesh.push_back(std::vector<unsigned int>());
@@ -23,7 +30,7 @@ void IGame::start() {
 		}
 	}
 
-	layout = new BrickLayout(renderTarget, WICFactory, length, length, 360, 0, mesh);
+	layout = new BrickLayout(deviceContext, WICFactory, length, length, 360, 0, mesh);
 
 	player = new SoundPlayer();
 	player->start();
@@ -36,16 +43,15 @@ void IGame::destroy() {
 	Game2D::destroy();
 }
 void IGame::render() {
-	renderTarget->BeginDraw();
-	renderTarget->DrawBitmap(background, D2D1::RectF(0, 0, SCR_WIDTH, SCR_HEIGHT));
+	deviceContext->BeginDraw();
+	
+	deviceContext->DrawBitmap(background, D2D1::RectF(0, 0, SCR_WIDTH, SCR_HEIGHT));
 	layout->render();
-	char str2[10];
-	sprintf_s(str2, 10, "%d", score);
-	wchar_t text[10];
-	mbstowcs_s(nullptr, text, 10, str2, strlen(str2));
-	float length = (renderTarget->GetSize().width > renderTarget->GetSize().height) ? renderTarget->GetSize().height / static_cast<float>(MSH_HEIGHT) : renderTarget->GetSize().width / static_cast<float>(MSH_WIDTH);
-	renderTarget->DrawText(text, (UINT32)(wcslen(text)), defaultFont, D2D1::RectF(360 + length * MSH_WIDTH, 0, 120 + 360 + length * MSH_WIDTH, 48 + 0), defaultBrush);
-	renderTarget->EndDraw();
+	
+	
+
+	deviceContext->EndDraw();
+	swapChain->Present1(1, 0, &presentParam);
 }
 void IGame::processInput(WPARAM wParam) {
 	switch (wParam) {

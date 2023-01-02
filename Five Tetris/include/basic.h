@@ -18,9 +18,8 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #   define PLAYER_NOTIF_POS_COUNT   20
 #endif /* PLAYER_NOTIF_POS_COUNT */
 
-HRESULT CreateRenderSource(ID2D1Factory1* factory, ID2D1HwndRenderTarget** renderTarget, HWND hwnd);
 void loadResourceBitmap(
-    ID2D1RenderTarget * pRenderTarget,
+    ID2D1DeviceContext *deviceContext,
     IWICImagingFactory * pIWICFactory,
     PCWSTR resourceName,
     PCWSTR resourceType,
